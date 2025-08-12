@@ -1,3 +1,4 @@
+# 기본 히라가나 46자
 hiragana_data = {
     'あ': {'english': 'a', 'korean': '아'},
     'い': {'english': 'i', 'korean': '이'},
@@ -45,5 +46,38 @@ hiragana_data = {
     'わ': {'english': 'wa', 'korean': '와'},
     'を': {'english': 'wo', 'korean': '오'},
     'ん': {'english': 'n', 'korean': '응'}
+}
+
+# 탁음
+dakuten_data = {
+    'が': {'english': 'ga', 'korean': '가'},
+    'ぎ': {'english': 'gi', 'korean': '기'},
+    'ぐ': {'english': 'gu', 'korean': '구'},
+    'げ': {'english': 'ge', 'korean': '게'},
+    'ご': {'english': 'go', 'korean': '고'},
+    'ざ': {'english': 'za', 'korean': '자'},
+    'じ': {'english': 'ji', 'korean': '지'},
+    'ず': {'english': 'zu', 'korean': '즈'},
+    'ぜ': {'english': 'ze', 'korean': '제'},
+    'ぞ': {'english': 'zo', 'korean': '조'},
+    'だ': {'english': 'da', 'korean': '다'},
+    'ぢ': {'english': 'di', 'korean': '디'},
+    'づ': {'english': 'du', 'korean': '두'},
+    'で': {'english': 'de', 'korean': '데'},
+    'ど': {'english': 'do', 'korean': '도'},
+    'ば': {'english': 'ba', 'korean': '바'},
+    'び': {'english': 'bi', 'korean': '비'},
+    'ぶ': {'english': 'bu', 'korean': '부'},
+    'べ': {'english': 'be', 'korean': '베'},
+    'ぼ': {'english': 'bo', 'korean': '보'},
+}
+
+# 반탁음
+handakuten_data = {
+    'ぱ': {'english': 'pa', 'korean': '파'},
+    'ぴ': {'english': 'pi', 'korean': '피'},
+    'ぷ': {'english': 'pu', 'korean': '푸'},
+    'ぺ': {'english': 'pe', 'korean': '페'},
+    'ぽ': {'english': 'po', 'korean': '포'}
 }
 
