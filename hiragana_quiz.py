@@ -41,11 +41,11 @@ with col3:
 st.markdown("---")
 
 # 현재 히라가나 표시
-st.markdown("### 다음 히라가나의 영어 발음을 입력하세요:")
+st.markdown("### 다음 히라가나의  발음을 입력하세요:")
 st.markdown(f"<div style='text-align: center; font-size: 120px; font-weight: bold; color: #FF6B6B; margin: 20px 0;'>{st.session_state.current_hiragana}</div>", unsafe_allow_html=True)
 
 # 사용자 입력
-user_input = st.text_input("영어 발음을 입력하세요:", key="user_answer", placeholder="예: ka, shi, tsu")
+user_input = st.text_input(" 발음을 입력하세요:", key="user_answer", placeholder="예: ka, shi, tsu")
 
 # 버튼들
 col1, col2, col3 = st.columns(3)
@@ -117,7 +117,7 @@ with st.expander("💡 힌트 보기"):
 st.markdown("---")
 st.markdown("### 📖 사용법:")
 st.markdown("""
-1. 화면에 표시된 히라가나를 보고 영어 발음을 입력하세요
+1. 화면에 표시된 히라가나를 보고  발음을 입력하세요
 2. '정답 확인' 버튼을 클릭하여 답을 확인하세요
 3. '다음 문제' 버튼으로 새로운 문제를 받으세요
 4. 힌트가 필요하면 위의 '힌트 보기'를 클릭하세요
