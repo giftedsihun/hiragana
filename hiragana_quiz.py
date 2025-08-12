@@ -110,16 +110,28 @@ else:  # 객관식
             generate_multiple_choices(st.session_state.current_hiragana)
 
     cols = st.columns(5)
+    selected_choice = None
     for i, choice in enumerate(st.session_state.multiple_choices):
         if cols[i].button(choice):
-            st.session_state.total_questions += 1
-            if i == st.session_state.correct_answer_index:
-                st.session_state.score += 1
-                st.session_state.feedback = f"✅ 정답! {current_data['english']}({current_data['korean']}) = {choice}"
-            else:
-                correct_hira = st.session_state.multiple_choices[st.session_state.correct_answer_index]
-                st.session_state.feedback = f"❌ 오답. 정답은 {correct_hira}"
-            new_question()
+            selected_choice = i
+
+    if selected_choice is not None:
+        st.session_state.total_questions += 1
+        correct_hira = st.session_state.multiple_choices[st.session_state.correct_answer_index]
+
+        if selected_choice == st.session_state.correct_answer_index:
+            st.session_state.score += 1
+            st.session_state.feedback = f"✅ 정답! {current_data['english']}({current_data['korean']}) = {correct_hira}"
+        else:
+            wrong_hira = st.session_state.multiple_choices[selected_choice]
+            st.session_state.feedback = (
+                f"❌ 오답! '{wrong_hira}'를 선택했어요.\n\n"
+                f"정답은 **{correct_hira}** ({current_data['english']} / {current_data['korean']}) 입니다."
+            )
+
+    if st.button("다음 문제"):
+        new_question()
+
 
 # 피드백
 if st.session_state.feedback:
