@@ -130,7 +130,6 @@ else:  # 객관식
                     f"❌ 오답! '{wrong_hira}'를 선택했습니다.\n\n"
                     f"정답은 **{correct_hira}** ({current_data['english']} / {current_data['korean']}) 입니다."
                 )
-
             # 버튼 누르면 바로 다음 문제로 변경
             new_question()
 
