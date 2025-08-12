@@ -103,35 +103,37 @@ elif quiz_type == "히라가나 → 한국어 입력":
 else:  # 객관식
     current_data = current_dataset[st.session_state.current_hiragana]
     st.markdown(f"### 다음 발음(영어+한국어)에 해당하는 히라가나를 고르세요:")
-    st.markdown(f"<div style='text-align:center;font-size:40px;color:#4CAF50;'>{current_data['english']} ({current_data['korean']})</div>", unsafe_allow_html=True)
+    st.markdown(
+        f"<div style='text-align:center;font-size:40px;color:#4CAF50;'>{current_data['english']} ({current_data['korean']})</div>",
+        unsafe_allow_html=True
+    )
 
+    # 선택지 없으면 생성
     if not st.session_state.multiple_choices:
         st.session_state.multiple_choices, st.session_state.correct_answer_index = \
             generate_multiple_choices(st.session_state.current_hiragana)
 
     cols = st.columns(5)
-    selected_choice = None
     for i, choice in enumerate(st.session_state.multiple_choices):
-        if cols[i].button(choice):
-            selected_choice = i
+        if cols[i].button(choice, key=f"choice_{i}"):
+            st.session_state.total_questions += 1
+            correct_hira = st.session_state.multiple_choices[st.session_state.correct_answer_index]
 
-    if selected_choice is not None:
-        st.session_state.total_questions += 1
-        correct_hira = st.session_state.multiple_choices[st.session_state.correct_answer_index]
+            if i == st.session_state.correct_answer_index:
+                st.session_state.score += 1
+                st.session_state.feedback = (
+                    f"✅ 정답! {current_data['english']}({current_data['korean']}) = {correct_hira}"
+                )
+            else:
+                wrong_hira = st.session_state.multiple_choices[i]
+                st.session_state.feedback = (
+                    f"❌ 오답! '{wrong_hira}'를 선택했습니다.\n\n"
+                    f"정답은 **{correct_hira}** ({current_data['english']} / {current_data['korean']}) 입니다."
+                )
 
-        if selected_choice == st.session_state.correct_answer_index:
-            st.session_state.score += 1
-            st.session_state.feedback = f"✅ 정답! {current_data['english']}({current_data['korean']}) = {correct_hira}"
-        else:
-            wrong_hira = st.session_state.multiple_choices[selected_choice]
-            st.session_state.feedback = (
-                f"❌ 오답! '{wrong_hira}'를 선택했어요.\n\n"
-                f"정답은 **{correct_hira}** ({current_data['english']} / {current_data['korean']}) 입니다."
-            )
-
+    # 다음 문제 버튼으로만 문제 변경
     if st.button("다음 문제"):
         new_question()
-
 
 # 피드백
 if st.session_state.feedback:
