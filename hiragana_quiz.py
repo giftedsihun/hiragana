@@ -24,7 +24,8 @@ if 'is_answered' not in st.session_state:
 # 학습 세트 선택
 learning_set_mode = st.selectbox(
     "학습 세트 선택",
-    ["기본모드", "탁음모드", "혼합모드"]
+    ["기본모드", "탁음모드", "혼합모드"],
+    key="learning_set_mode_select"
 )
 if learning_set_mode == "기본모드":
     current_dataset = hiragana_data
@@ -36,7 +37,8 @@ else:  # 혼합모드
 # 퀴즈 타입 선택
 quiz_type = st.selectbox(
     "퀴즈 모드 선택",
-    ["히라가나 → 영어 입력", "히라가나 → 한국어 입력", "영·한 발음 → 히라가나 5개 중 선택"]
+    ["히라가나 → 영어 입력", "히라가나 → 한국어 입력", "영·한 발음 → 히라가나 5개 중 선택"],
+    key="quiz_type_select"
 )
 
 # 문제 생성
@@ -52,9 +54,6 @@ def new_question():
     st.session_state.multiple_choices = []
     st.session_state.correct_answer_index = 0
     st.session_state.is_answered = False  # 새 문제 시 정답 상태 초기화
-    if quiz_type == "영·한 발음 → 히라가나 5개 중 선택":
-        st.session_state.multiple_choices, st.session_state.correct_answer_index = \
-            generate_multiple_choices(st.session_state.current_hiragana)
 
 # 초기 문제 설정
 if st.session_state.current_hiragana is None:
@@ -74,82 +73,84 @@ st.markdown("---")
 # 모드별 퀴즈 UI
 if quiz_type == "히라가나 → 영어 입력":
     st.markdown(f"### 다음 히라가나의 영어 발음을 입력하세요:")
-    st.markdown(f"<div style='text-align:center;font-size:120px;'>{st.session_state.current_hiragana}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style=\'text-align:center;font-size:120px;\'>{st.session_state.current_hiragana}</div>", unsafe_allow_html=True)
     
-    # 정답을 입력했으면 입력 필드 비활성화
-    answer = st.text_input("영어 발음:", placeholder="예: ka, shi, tsu", disabled=st.session_state.is_answered)
+    answer = st.text_input("영어 발음:", placeholder="예: ka, shi, tsu", disabled=st.session_state.is_answered, key="english_input")
 
-    # 정답 확인 버튼도 정답 후 비활성화
-    if st.button("정답 확인", disabled=st.session_state.is_answered):
+    if st.button("정답 확인", disabled=st.session_state.is_answered, key="check_answer_eng"):
         correct = current_dataset[st.session_state.current_hiragana]['english']
-        st.session_state.total_questions += 1
-        st.session_state.is_answered = True  # 정답 입력 상태로 변경
-        if answer.strip().lower() == correct:
-            st.session_state.score += 1
-            st.session_state.feedback = f"✅ 정답! {st.session_state.current_hiragana} = {correct}"
-        else:
-            st.session_state.feedback = f"❌ 오답. 정답은 {correct}"
+        if not st.session_state.is_answered: # 이중 체크
+            st.session_state.total_questions += 1
+            st.session_state.is_answered = True
+            if answer.strip().lower() == correct:
+                st.session_state.score += 1
+                st.session_state.feedback = f"✅ 정답! {st.session_state.current_hiragana} = {correct}"
+            else:
+                st.session_state.feedback = f"❌ 오답. 정답은 {correct}"
+        st.rerun()
     
-    if st.button("다음 문제"):
+    if st.button("다음 문제", disabled=not st.session_state.is_answered, key="next_question_eng"):
         new_question()
+        st.rerun()
 
 elif quiz_type == "히라가나 → 한국어 입력":
     st.markdown(f"### 다음 히라가나의 한국어 발음을 입력하세요:")
-    st.markdown(f"<div style='text-align:center;font-size:120px;'>{st.session_state.current_hiragana}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style=\'text-align:center;font-size:120px;\'>{st.session_state.current_hiragana}</div>", unsafe_allow_html=True)
     
-    # 정답을 입력했으면 입력 필드 비활성화
-    answer = st.text_input("한국어 발음:", placeholder="예: 카, 시, 츠", disabled=st.session_state.is_answered)
+    answer = st.text_input("한국어 발음:", placeholder="예: 카, 시, 츠", disabled=st.session_state.is_answered, key="korean_input")
 
-    # 정답 확인 버튼도 정답 후 비활성화
-    if st.button("정답 확인", disabled=st.session_state.is_answered):
+    if st.button("정답 확인", disabled=st.session_state.is_answered, key="check_answer_kor"):
         correct = current_dataset[st.session_state.current_hiragana]['korean']
-        st.session_state.total_questions += 1
-        st.session_state.is_answered = True  # 정답 입력 상태로 변경
-        if answer.strip() == correct:
-            st.session_state.score += 1
-            st.session_state.feedback = f"✅ 정답! {st.session_state.current_hiragana} = {correct}"
-        else:
-            st.session_state.feedback = f"❌ 오답. 정답은 {correct}"
+        if not st.session_state.is_answered: # 이중 체크
+            st.session_state.total_questions += 1
+            st.session_state.is_answered = True
+            if answer.strip() == correct:
+                st.session_state.score += 1
+                st.session_state.feedback = f"✅ 정답! {st.session_state.current_hiragana} = {correct}"
+            else:
+                st.session_state.feedback = f"❌ 오답. 정답은 {correct}"
+        st.rerun()
     
-    if st.button("다음 문제"):
+    if st.button("다음 문제", disabled=not st.session_state.is_answered, key="next_question_kor"):
         new_question()
+        st.rerun()
 
 else:  # 객관식
     current_data = current_dataset[st.session_state.current_hiragana]
     st.markdown(f"### 다음 발음(영어+한국어)에 해당하는 히라가나를 고르세요:")
     st.markdown(
-        f"<div style='text-align:center;font-size:40px;color:#4CAF50;'>{current_data['english']} ({current_data['korean']})</div>",
+        f"<div style=\'text-align:center;font-size:40px;color:#4CAF50;\'>{current_data['english']} ({current_data['korean']})</div>",
         unsafe_allow_html=True
     )
 
-    # 선택지 없으면 생성
     if not st.session_state.multiple_choices:
         st.session_state.multiple_choices, st.session_state.correct_answer_index = \
             generate_multiple_choices(st.session_state.current_hiragana)
 
     cols = st.columns(5)
     for i, choice in enumerate(st.session_state.multiple_choices):
-        # 정답을 선택했으면 모든 선택지 버튼 비활성화
         if cols[i].button(choice, key=f"choice_{i}", disabled=st.session_state.is_answered):
-            st.session_state.total_questions += 1
-            st.session_state.is_answered = True  # 정답 입력 상태로 변경
-            correct_hira = st.session_state.multiple_choices[st.session_state.correct_answer_index]
+            if not st.session_state.is_answered: # 이중 체크
+                st.session_state.total_questions += 1
+                st.session_state.is_answered = True
+                correct_hira = st.session_state.multiple_choices[st.session_state.correct_answer_index]
 
-            if i == st.session_state.correct_answer_index:
-                st.session_state.score += 1
-                st.session_state.feedback = (
-                    f"✅ 정답! {current_data['english']}({current_data['korean']}) = {correct_hira}"
-                )
-            else:
-                wrong_hira = st.session_state.multiple_choices[i]
-                st.session_state.feedback = (
-                    f"❌ 오답! '{wrong_hira}'를 선택했습니다.\n\n"
-                    f"정답은 **{correct_hira}** ({current_data['english']} / {current_data['korean']}) 입니다."
-                )
+                if i == st.session_state.correct_answer_index:
+                    st.session_state.score += 1
+                    st.session_state.feedback = (
+                        f"✅ 정답! {current_data['english']}({current_data['korean']}) = {correct_hira}"
+                    )
+                else:
+                    wrong_hira = st.session_state.multiple_choices[i]
+                    st.session_state.feedback = (
+                        f"❌ 오답! \'{wrong_hira}\'를 선택했습니다.\n\n"
+                        f"정답은 **{correct_hira}** ({current_data['english']} / {current_data['korean']}) 입니다."
+                    )
+            st.rerun()
 
-    # 다음 문제 버튼으로만 문제 변경
-    if st.button("다음 문제"):
+    if st.button("다음 문제", disabled=not st.session_state.is_answered, key="next_question_mc"):
         new_question()
+        st.rerun()
 
 # 피드백
 if st.session_state.feedback:
@@ -163,7 +164,8 @@ if st.button("점수 초기화"):
     st.session_state.score = 0
     st.session_state.total_questions = 0
     st.session_state.feedback = ""
-    st.session_state.is_answered = False  # 점수 초기화 시 정답 상태도 초기화
-
+    st.session_state.is_answered = False
+    new_question() # 새로운 문제로 시작
+    st.rerun() # 상태 초기화 후 즉시 새로고침
 
 
